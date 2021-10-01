@@ -205,28 +205,31 @@ class AStar(Search):
             # if the goal is found
             if node == self.goal:
                 # Retrieving the cost from the hash map
-                cost_node = self.CLOSED[node.state_hash()]
+                cost_node = node.get_cost()
                 return cost_node, node_expanded
             
-            self.CLOSED[start.state_hash()] = start.get_cost()
+            self.CLOSED[node.state_hash()] = node
             
             # Retrieving children of node n
             for n_prime in self.map.successors(node):
                 
                 # if n_prime has not been expanded before
                 # if the child node is NOT in the CLOSED list
-                if (n_prime.state_hash()) in self.CLOSED:
+                if n_prime.state_hash() in self.CLOSED:
                     continue
                 
                 if n_prime in self.OPEN:
-                    if n_prime.get_g() < self.CLOSED[n_prime.state_hash()]:
-                        self.CLOSED[n_prime.state_hash()] = n_prime.get_g()
+                    n_prime_index = self.OPEN[self.OPEN.index(n_prime)]
+                    if n_prime.get_g() < n_prime_index.get_g():
+                        n_prime_index.set_g(n_prime.get_g())
+                        n_prime_index.set_cost(n_prime.get_g() + self.h_value(n_prime_index))
+                        heapq.heapify(self.OPEN)
                 else:
+                    
                     # If it isn't in the open set, calculate the G and H score for n_prime
-                    self.CLOSED[n_prime.state_hash()] = n_prime.get_g()
                     n_prime.set_cost(n_prime.get_g() + self.h_value(n_prime))
                     
                     heapq.heappush(self.OPEN, n_prime)
-                    heapq.heapify(self.OPEN)
+                    
         return -1, 0
     
