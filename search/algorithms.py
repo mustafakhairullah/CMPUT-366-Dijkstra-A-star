@@ -177,11 +177,11 @@ class Dijkstra(Search):
     
 class AStar(Search):
     
-    def h_value(self, state, goal):
-        x = abs(state.get_x() - goal.get_x())
-        y = abs(state.get_y() - goal.get_y())
+    def h_value(self, state):
+        x = abs(state.get_x() - self.goal.get_x())
+        y = abs(state.get_y() - self.goal.get_y())
         
-        return min(x,y) + 0.5 * min(x, y)
+        return max(x,y) + 0.5 * min(x, y)
 
             
     def search(self, start, goal):
@@ -193,17 +193,17 @@ class AStar(Search):
         """
         self.OPEN = []
         self.CLOSED = {}
+        self.goal = goal
         node_expanded = 0
         
         heapq.heappush(self.OPEN, start)
-        self.CLOSED[start.state_hash()] = start.get_cost()
         
         while self.OPEN:
             node = heapq.heappop(self.OPEN)
             node_expanded += 1
             
             # if the goal is found
-            if node == goal:
+            if node == self.goal:
                 # Retrieving the cost from the hash map
                 cost_node = self.CLOSED[node.state_hash()]
                 return cost_node, node_expanded
@@ -220,11 +220,11 @@ class AStar(Search):
                 
                 if n_prime in self.OPEN:
                     if n_prime.get_g() < self.CLOSED[n_prime.state_hash()]:
-                        n_prime.set_g(self.CLOSED[n_prime.state_hash()])
+                        self.CLOSED[n_prime.state_hash()] = n_prime.get_g()
                 else:
                     # If it isn't in the open set, calculate the G and H score for n_prime
-                    self.CLOSED[n_prime.state_hash()] = n_prime.get_g() + self.h_value(n_prime, goal)
-                    n_prime.set_cost(n_prime.get_g() + self.h_value(n_prime, goal))
+                    self.CLOSED[n_prime.state_hash()] = n_prime.get_g()
+                    n_prime.set_cost(n_prime.get_g() + self.h_value(n_prime))
                     
                     heapq.heappush(self.OPEN, n_prime)
                     heapq.heapify(self.OPEN)
