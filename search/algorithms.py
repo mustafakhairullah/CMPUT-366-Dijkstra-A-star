@@ -222,13 +222,15 @@ class AStar(Search):
                     n_prime_index = self.OPEN[self.OPEN.index(n_prime)]
                     if n_prime.get_g() < n_prime_index.get_g():
                         n_prime_index.set_g(n_prime.get_g())
+                        
+                        # setting g-score of n_prime
                         n_prime_index.set_cost(n_prime.get_g() + self.h_value(n_prime_index))
+                        
                         heapq.heapify(self.OPEN)
                 else:
                     
                     # If it isn't in the open set, calculate the G and H score for n_prime
                     n_prime.set_cost(n_prime.get_g() + self.h_value(n_prime))
-                    
                     heapq.heappush(self.OPEN, n_prime)
                     
         return -1, 0
