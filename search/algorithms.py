@@ -183,10 +183,10 @@ class Dijkstra(Search):
 class AStar(Search):
 
     def h_value(self, state):
-        delta_x = abs(state.get_x() - self.goal.get_x())
-        delta_y = abs(state.get_y() - self.goal.get_y())
+        delta_x = state.get_x() - self.goal.get_x()
+        delta_y = state.get_y() - self.goal.get_y()
 
-        return max(delta_x, delta_y) + 0.5 * min(delta_x, delta_y)
+        return max(abs(delta_x), abs(delta_y)) + 0.5 * min(abs(delta_x), abs(delta_y))
 
     def search(self, start, goal):
         """
