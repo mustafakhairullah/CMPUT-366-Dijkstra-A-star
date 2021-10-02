@@ -183,10 +183,10 @@ class Dijkstra(Search):
 class AStar(Search):
 
     def h_value(self, state):
-        x = abs(state.get_x() - self.goal.get_x())
-        y = abs(state.get_y() - self.goal.get_y())
+        delta_x = abs(state.get_x() - self.goal.get_x())
+        delta_y = abs(state.get_y() - self.goal.get_y())
 
-        return max(x, y) + 0.5 * min(x, y)
+        return max(delta_x, delta_y) + 0.5 * min(delta_x, delta_y)
 
     def search(self, start, goal):
         """
@@ -224,12 +224,14 @@ class AStar(Search):
 
                 if n_prime in self.OPEN:
                     n_prime_index = self.OPEN[self.OPEN.index(n_prime)]
+
                     if n_prime.get_g() < n_prime_index.get_g():
                         n_prime_index.set_g(n_prime.get_g())
 
                         # setting g-score of n_prime
                         n_prime_index.set_cost(
-                            n_prime.get_g() + self.h_value(n_prime_index))
+                            n_prime.get_g() + self.h_value(n_prime_index)
+                        )
 
                         heapq.heapify(self.OPEN)
                 else:
